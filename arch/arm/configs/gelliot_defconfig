@@ -64,6 +64,11 @@ CONFIG_AUDIT=y
 CONFIG_HAVE_GENERIC_HARDIRQS=y
 
 #
+# Alex-the-black Patches
+#
+CONFIG_FORCE_FAST_CHARGE=y
+
+#
 # IRQ subsystem
 #
 CONFIG_GENERIC_HARDIRQS=y
