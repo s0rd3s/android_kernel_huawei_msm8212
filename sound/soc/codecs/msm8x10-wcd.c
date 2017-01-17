@@ -28,6 +28,7 @@
 #include <linux/of_gpio.h>
 #include <linux/regulator/consumer.h>
 #include <linux/mfd/wcd9xxx/pdata.h>
+#include <linux/mfd/wcd9xxx/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
 #include <sound/soc.h>
@@ -551,10 +552,22 @@ static int msm8x10_wcd_readable(struct snd_soc_codec *ssc, unsigned int reg)
 	return msm8x10_wcd_reg_readable[reg];
 }
 
-static int msm8x10_wcd_write(struct snd_soc_codec *codec, unsigned int reg,
-			     unsigned int value)
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+extern int snd_hax_reg_access(unsigned int);
+extern unsigned int snd_hax_cache_read(unsigned int);
+extern void snd_hax_cache_write(unsigned int, unsigned int);
+#endif
+
+#ifndef CONFIG_SOUND_CONTROL_HAX_3_GPL
+static
+#endif
+int msm8x10_wcd_write(struct snd_soc_codec *codec, unsigned int reg,
+unsigned int value)
 {
 	int ret;
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+	int val;
+#endif
 	dev_dbg(codec->dev, "%s: Write from reg 0x%x\n", __func__, reg);
 	if (reg == SND_SOC_NOPM)
 		return 0;
@@ -567,12 +580,29 @@ static int msm8x10_wcd_write(struct snd_soc_codec *codec, unsigned int reg,
 			dev_err(codec->dev, "Cache write to %x failed: %d\n",
 				reg, ret);
 	}
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+	 if (!snd_hax_reg_access(reg)) {
+	 if (!((val = snd_hax_cache_read(reg)) != -1)) {
+	 	val = wcd9xxx_reg_read_safe(codec->control_data, reg);
+	 	}
+	 } else {
+	 	snd_hax_cache_write(reg, value);
+	 	val = value;
+	 }
+	 return __msm8x10_wcd_reg_write(codec->control_data, reg, val);
+#else
 
 	return __msm8x10_wcd_reg_write(codec->control_data, reg, (u8)value);
+#endif
 }
 
-static unsigned int msm8x10_wcd_read(struct snd_soc_codec *codec,
-				unsigned int reg)
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+EXPORT_SYMBOL(msm8x10_wcd_write);
+#endif
+#ifndef CONFIG_SOUND_CONTROL_HAX_3_GPL
+static
+#endif
+unsigned int msm8x10_wcd_read(struct snd_soc_codec *codec,unsigned int reg)
 {
 	unsigned int val;
 	int ret;
@@ -3213,6 +3243,13 @@ done:
 	return rc;
 }
 
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+struct snd_kcontrol_new *gpl_faux_snd_controls_ptr =
+ 	(struct snd_kcontrol_new *)msm8x10_wcd_snd_controls;
+struct snd_soc_codec *fauxsound_codec_ptr;
+EXPORT_SYMBOL(fauxsound_codec_ptr);
+#endif
+
 static int msm8x10_wcd_codec_probe(struct snd_soc_codec *codec)
 {
 	struct msm8x10_wcd_priv *msm8x10_wcd_priv;
@@ -3220,6 +3257,11 @@ static int msm8x10_wcd_codec_probe(struct snd_soc_codec *codec)
 	struct wcd9xxx_core_resource *core_res;
 	int i, ret = 0;
 	struct msm8x10_wcd_pdata *pdata;
+
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+	 pr_info("msm8x10_wcd codec probe...\n");
+	 fauxsound_codec_ptr = codec;
+#endif
 
 	dev_dbg(codec->dev, "%s()\n", __func__);
 
