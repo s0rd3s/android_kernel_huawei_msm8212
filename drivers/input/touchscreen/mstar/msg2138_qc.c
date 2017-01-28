@@ -28,7 +28,7 @@
 #include <linux/miscdevice.h>
 #include <linux/wakelock.h>
 #include <linux/regulator/consumer.h>
-#include <tpd_custom_msg2133.h>
+#include "tpd_custom_msg2133.h"
 #include <linux/of_gpio.h>
 #include <linux/notifier.h>
 #include <linux/fb.h>

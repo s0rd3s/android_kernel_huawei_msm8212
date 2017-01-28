@@ -1,19 +1,14 @@
 /*
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License version 2 as
    published by the Free Software Foundation.
-
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
    This program is distributed in the hope that it will be useful, but
    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
    for more details.
-
-
    Copyright (C) 2011-2012  Huawei Corporation
 */
 
@@ -112,13 +107,13 @@ static char *get_bt_fm_device_name(void)
     }
     
     /* lookup bt_device_model in bt_device_array[] */
-    for(i = 0; i < arry_size; i++)
-    {
-        if(0 == strncmp(bt_fm_chip_type,fm_device_array[i].chip_type,sizeof(fm_device_array[i].chip_type)))
-        {
-            break;
-        }
-    }
+//    for(i = 0; i < arry_size; i++)
+//    {
+//        if(0 == strncmp(bt_fm_chip_type,fm_device_array[i].chip_type,sizeof(fm_device_array[i].chip_type)))
+//        {
+//            break;
+//        }
+//    }
     /* If we get invalid type name, return "Unknown".*/
     if( i == arry_size)
     {

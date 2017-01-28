@@ -26,7 +26,7 @@
 #include "mdss_dsi.h"
 #include "dsi_v2.h"
 
-#include <hw_lcd_debug.h>
+#include "hw_lcd_debug.h"
 #include <misc/app_info.h>
 #include <linux/hw_lcd_common.h>
 #ifdef CONFIG_FB_DISPLAY_INVERSION

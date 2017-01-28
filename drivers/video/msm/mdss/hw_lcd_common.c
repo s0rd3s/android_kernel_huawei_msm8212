@@ -69,7 +69,7 @@
 #include<linux/module.h>
 	 
 #include <linux/hw_lcd_common.h>
-#include <mdss_dsi.h>
+#include "mdss_dsi.h"
 #include <linux/of.h>
 
 
